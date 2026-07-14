@@ -11,16 +11,16 @@ class card:
 
 #Class representing a deck of 52 standard playing cards
 class deck_52:
+    suits = ["Spades","Clubs","Hearts","Diamonds"]
+    values = [1,2,3,4,5,6,7,8,9,10,11,12,13]
     def __init__(self):
         self.max_cards = 52
         self.card_list = []
-        self.suits = ["Spades","Clubs","Hearts","Diamonds"]
-        self.values = [1,2,3,4,5,6,7,8,9,10,11,12,13]
     
     #Goes through the list of suits and values to add all the cards to the deck
     def new(self):
-        for suit in self.suits:
-            for value in self.values:
+        for suit in deck_52.suits:
+            for value in deck_52.values:
                 self.card_list.append(card(suit,value))
     
     #Iterates through the card list and prints them.
