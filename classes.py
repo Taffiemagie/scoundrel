@@ -31,3 +31,7 @@ class deck_52:
     #Shuffles deck
     def shuffle_deck(self):
         random.shuffle(self.card_list)
+
+    #Pulls top card from deck
+    def draw(self):
+        return self.card_list.pop(0)
