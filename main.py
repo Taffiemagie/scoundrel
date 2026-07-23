@@ -42,19 +42,98 @@ def show_menu():
     global hp
     global scoundrel_deck
     global weapon
+    COLOUR_RESET = "\033[0m"
+    COLOUR_RED = "\033[31m"
+    COLOUR_BLACK = "\033[30m"
     #Only shows last slain monster if a monster has been slain
-    if len(weapon) == 1:
-        print(f"~ HP:{hp} Cards left:{len(scoundrel_deck.card_list)} ~\n~ Weapon:{weapon[0]} ~\n~ Select a card from below or press \'help\' ~")
-    elif len(weapon) > 1:
-        print(f"~ HP:{hp} Cards left:{len(scoundrel_deck.card_list)} ~\n~ Weapon:{weapon[0]} Slain monster:{weapon[-1]} ~\n~ Select a card from below or press \'help\' ~")
+    if weapon[0] == "None":
+        print(f"\n~ HP:{hp} Cards left:{len(scoundrel_deck.card_list) + len(room)} ~\n~ Weapon:{weapon[0]} ~\n~ Select a card from below or enter \'help\' ~")
+    elif weapon[-1].suit == "Diamonds":
+        print(f"\n~ HP:{hp} Cards left:{len(scoundrel_deck.card_list) + len(room)} ~\n~ Weapon:{weapon[0].uname} ~\n~ Select a card from below or enter \'help\' ~")
+    elif len(weapon) >= 2:
+        print(f"\n~ HP:{hp} Cards left:{len(scoundrel_deck.card_list) + len(room)} ~\n~ Weapon:{weapon[0].uname} ~ Last Slain Monster:{weapon[-1].uname} ~\n~ Select a card from below or enter \'help\' ~")
     card_num = 1
     for card in room:
-        print(f"{card_num}: {card.uname}")
+        if card.suit == "Diamonds" or card.suit == "Hearts":
+            print(f"{card_num}: {COLOUR_RED}{card.uname}{COLOUR_RESET}")
+        elif card.suit == "Clubs" or card.suit == "Spades":
+            print(f"{card_num}: {COLOUR_BLACK}{card.uname}{COLOUR_RESET}")
         card_num += 1
+
+#Allows the user to play a card
+def play():
+    global room
+    global hp
+    global scoundrel_deck
+    global weapon
+    choice = input("~ ").lower()
+    valid_inputs = ['1','2','3','4','help','h']
+    while choice not in valid_inputs:
+        choice = input("~ Invalid input ~\n~ ").lower()
+    if choice in valid_inputs[:4]:
+        choice_card = room[int(choice)-1]
+        #Performs actions according to the card's suit and conditions
+        match choice_card.suit:
+            case "Hearts":
+                if hp + choice_card.value < 20:
+                    hp += choice_card.value
+                else:
+                    hp = 20
+                room.remove(choice_card)
+            case "Diamonds":
+                weapon = [room.pop(int(choice)-1)]
+            #Logically assigns damage base on weapon and slain enemies
+            case "Clubs" | "Spades":
+                #Case where there is no weapon
+                if weapon[-1] == "None":
+                    hp -= choice_card.value
+                    room.remove(choice_card)
+                #Case where the weapon has not slain any monsters
+                elif weapon[-1].suit == "Diamonds":
+                    slay = input(f"~ Slay the {choice_card.uname} with {weapon[0].uname} [w] or hands? [h] ~ ")
+                    while slay.lower() != 'w' and slay.lower() != 'h':
+                        slay = input(f"~ Incorrect input ~\n~ Slay the {choice_card.uname} with {weapon[0].uname} [w] or hands? [h] ~ ")
+                    if slay.lower() == 'w':
+                        if choice_card.value > weapon[0].value:
+                            hp -= (choice_card.value - weapon[-1].value)
+                        weapon.append(choice_card)
+                    elif slay.lower() == 'h':
+                        hp -= choice_card.value
+                    room.remove(choice_card)
+                #Case where the weapon has slain monster(s)
+                elif weapon[-1].suit == "Spades" or weapon[-1].suit == "Clubs":
+                    #Checks if monster is lower value than previously slain monster
+                    if choice_card.value < weapon[-1].value:
+                        slay = input(f"~ Slay the {choice_card.uname} with {weapon[0].uname} [w] or hands? [h] ~")
+                        while slay.lower() != 'w' and slay.lower() != 'h':
+                            slay = input(f"~ Incorrect input ~\n~ Slay the {choice_card.uname} with {weapon[0].uname} [w] or hands? [h] ~ ")
+                        if slay == 'w':
+                            if choice_card.value > weapon[0].value:
+                                hp -= choice_card.value - weapon[0].value
+                            weapon.append(choice_card)
+                        elif slay == 'h':
+                            hp -= choice_card.value
+                    elif choice_card.value > weapon[-1].value:
+                        hp -= choice_card.value
+                    room.remove(choice_card)
+    
 
 #Gameplay loop.
 def __main__():
+    global room
+    global hp
+    global scoundrel_deck
+    global weapon
     new_game()
-    show_menu()
+    while hp > 0 and (len(scoundrel_deck.card_list) + len(room) > 0):
+        show_menu()
+        play()
+        if len(room) == 1 and len(scoundrel_deck.card_list) > 0:
+            for i in range(3):
+                room.append(scoundrel_deck.draw())
+    if hp <= 0:
+        print("GG you died shake my hand")
+    elif hp > 0:
+        print("Nice one bro you lived")
 
 __main__()
