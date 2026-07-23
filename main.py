@@ -42,6 +42,7 @@ def show_menu():
     global hp
     global scoundrel_deck
     global weapon
+    #Only shows last slain monster if a monster has been slain
     if len(weapon) == 1:
         print(f"~ HP:{hp} Cards left:{len(scoundrel_deck.card_list)} ~\n~ Weapon:{weapon[0]} ~\n~ Select a card from below or press \'help\' ~")
     elif len(weapon) > 1:
@@ -50,10 +51,6 @@ def show_menu():
     for card in room:
         print(f"{card_num}: {card.uname}")
         card_num += 1
-
-#Allows the user to select a option and updates global variables
-def play_card():
-    global room
 
 #Gameplay loop.
 def __main__():
