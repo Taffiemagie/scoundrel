@@ -49,9 +49,9 @@ def show_menu():
     if weapon[0] == "None":
         print(f"\n~ HP:{hp} Cards left:{len(scoundrel_deck.card_list) + len(room)} ~\n~ Weapon:{weapon[0]} ~\n~ Select a card from below or enter \'help\' ~")
     elif weapon[-1].suit == "Diamonds":
-        print(f"\n~ HP:{hp} Cards left:{len(scoundrel_deck.card_list) + len(room)} ~\n~ Weapon:{weapon[0].uname} ~\n~ Select a card from below or enter \'help\' ~")
+        print(f"\n~ HP:{hp} Cards left:{len(scoundrel_deck.card_list) + len(room)} ~\n~ Weapon:{COLOUR_RED}{weapon[0].uname}{COLOUR_RESET} ~\n~ Select a card from below or enter \'help\' ~")
     elif len(weapon) >= 2:
-        print(f"\n~ HP:{hp} Cards left:{len(scoundrel_deck.card_list) + len(room)} ~\n~ Weapon:{weapon[0].uname} ~ Last Slain Monster:{weapon[-1].uname} ~\n~ Select a card from below or enter \'help\' ~")
+        print(f"\n~ HP:{hp} Cards left:{len(scoundrel_deck.card_list) + len(room)} ~\n~ Weapon:{COLOUR_RED}{weapon[0].uname}{COLOUR_RESET)} ~ Last Slain Monster:{COLOUR_BLACK}{weapon[-1].uname}{COLOUR_RESET} ~\n~ Select a card from below or enter \'help\' ~")
     card_num = 1
     for card in room:
         if card.suit == "Diamonds" or card.suit == "Hearts":
