@@ -5,8 +5,9 @@
 # Author: cake_eater
 
 # To-Do list:
+# Add black aces (value of 14). Done in the new_game() function
 # Add skip mechanism (can skip as long as previous turn was not a skip, send the room to the back of the deck)
-# Used cards shown as none in the room until refill. Replace .remove(choice_card) with choice_card = "none"
+# Give the helper() function some basic commands.
 
 import classes
 room = []
@@ -62,6 +63,11 @@ def show_menu():
             print(f"{card_num}: {COLOUR_BLACK}{card.uname}{COLOUR_RESET}")
         card_num += 1
 
+#Brings up help menu and allows some basic commands
+def helper():
+    print("\n" + "-" * 50 + "\n~ Game rules can be found here: http://www.stfj.net/art/2011/Scoundrel.pdf ~\nCommands:\n~ ExampleCommand: Does nothing ~\n" + "-" * 50)
+    choice = input("~ Continue? [y/n]: ")
+
 #Allows the user to play a card
 def play():
     global room
@@ -72,10 +78,12 @@ def play():
     COLOUR_RED = "\033[31m"
     COLOUR_BLACK = "\033[30m"
     choice = input("~ ").lower()
-    valid_inputs = ['1','2','3','4','help','h']
-    while choice not in valid_inputs:
+    valid_inputs = ['help','h']
+    while choice not in valid_inputs and choice not in str(range(len(room))):
         choice = input("~ Invalid input ~\n~ ").lower()
-    if choice in valid_inputs[:4]:
+    if choice == "help" or "h":
+        helper()
+    if choice in str(range(len(room))):
         choice_card = room[int(choice)-1]
         #Performs actions according to the card's suit and conditions
         match choice_card.suit:
@@ -121,7 +129,6 @@ def play():
                     elif choice_card.value >= weapon[-1].value:
                         hp -= choice_card.value
                     room.remove(choice_card)
-    
 
 #Gameplay loop.
 def __main__():
