@@ -1,16 +1,18 @@
 #!/bin/python3
 
-"""
-Program Name: Scoundrel
-Program Purpose: Play Scoundrel
-Author: cake_eater
-"""
+# Program Name: Scoundrel
+# Program Purpose: Play Scoundrel
+# Author: cake_eater
+
+# To-Do list:
+# Add skip mechanism (can skip as long as previous turn was not a skip, send the room to the back of the deck)
+# Used cards shown as none in the room until refill. Replace .remove(choice_card) with choice_card = "none"
 
 import classes
 room = []
 hp = 0
 scoundrel_deck = classes.deck_52()
-#Weapon is a list: the card at index 0 will be the weapon, the rest will be monsters.
+# weapon is a structured list: the card at index 0 will be the weapon, the rest will be monsters.
 weapon = ["None"]
 
 #Sets the variables for a new game then shuffles the deck and creates the room
@@ -66,6 +68,9 @@ def play():
     global hp
     global scoundrel_deck
     global weapon
+    COLOUR_RESET = "\033[0m"
+    COLOUR_RED = "\033[31m"
+    COLOUR_BLACK = "\033[30m"
     choice = input("~ ").lower()
     valid_inputs = ['1','2','3','4','help','h']
     while choice not in valid_inputs:
@@ -90,9 +95,9 @@ def play():
                     room.remove(choice_card)
                 #Case where the weapon has not slain any monsters
                 elif weapon[-1].suit == "Diamonds":
-                    slay = input(f"~ Slay the {choice_card.uname} with {weapon[0].uname} [w] or hands? [h] ~ ")
+                    slay = input(f"~ Slay the {COLOUR_BLACK}{choice_card.uname}{COLOUR_RESET} with {COLOUR_RED}{weapon[0].uname}{COLOUR_RESET} [w] or hands? [h] ~ ")
                     while slay.lower() != 'w' and slay.lower() != 'h':
-                        slay = input(f"~ Incorrect input ~\n~ Slay the {choice_card.uname} with {weapon[0].uname} [w] or hands? [h] ~ ")
+                        slay = input(f"~ Incorrect input ~\n~ Slay the {COLOUR_BLACK}{choice_card.uname}{COLOUR_RESET} with {COLOUR_RED}{weapon[0].uname}{COLOUR_RESET} [w] or hands? [h] ~ ")
                     if slay.lower() == 'w':
                         if choice_card.value > weapon[0].value:
                             hp -= (choice_card.value - weapon[-1].value)
@@ -104,16 +109,16 @@ def play():
                 elif weapon[-1].suit == "Spades" or weapon[-1].suit == "Clubs":
                     #Checks if monster is lower value than previously slain monster
                     if choice_card.value < weapon[-1].value:
-                        slay = input(f"~ Slay the {choice_card.uname} with {weapon[0].uname} [w] or hands? [h] ~")
+                        slay = input(f"~ Slay the {COLOUR_BLACK}{choice_card.uname}{COLOUR_RESET} with {COLOUR_RED}{weapon[0].uname}{COLOUR_RESET} [w] or hands? [h] ~")
                         while slay.lower() != 'w' and slay.lower() != 'h':
-                            slay = input(f"~ Incorrect input ~\n~ Slay the {choice_card.uname} with {weapon[0].uname} [w] or hands? [h] ~ ")
+                            slay = input(f"~ Incorrect input ~\n~ Slay the {COLOUR_BLACK}{choice_card.uname}{COLOUR_RESET} with {COLOUR_RED}{weapon[0].uname}{COLOUR_RESET} [w] or hands? [h] ~ ")
                         if slay == 'w':
                             if choice_card.value > weapon[0].value:
                                 hp -= choice_card.value - weapon[0].value
                             weapon.append(choice_card)
                         elif slay == 'h':
                             hp -= choice_card.value
-                    elif choice_card.value > weapon[-1].value:
+                    elif choice_card.value >= weapon[-1].value:
                         hp -= choice_card.value
                     room.remove(choice_card)
     
