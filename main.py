@@ -6,7 +6,7 @@
 
 # To-Do list:
 # Add black aces (value of 14). Done in the new_game() function
-# Add skip mechanism (can skip as long as previous turn was not a skip, send the room to the back of the deck)
+# Have skip mechanism enforce twice in a row rule
 # Give the helper() function some basic commands.
 
 import classes
@@ -65,8 +65,11 @@ def show_menu():
 
 #Brings up help menu and allows some basic commands
 def helper():
-    print("\n" + "-" * 50 + "\n~ Game rules can be found here: http://www.stfj.net/art/2011/Scoundrel.pdf ~\nCommands:\n~ ExampleCommand: Does nothing ~\n" + "-" * 50)
-    choice = input("~ Continue? [y/n]: ")
+    print("\n" + "-" * 50 +
+          "\n~ Game rules can be found here: http://www.stfj.net/art/2011/Scoundrel.pdf \
+          ~\nCommands:\n~ Skip (s): Sends current room to bottom of the deck. ~\n"
+            + "-" * 50)
+    input("~ Press enter to continue ~ ")
 
 #Allows the user to play a card
 def play():
@@ -78,12 +81,21 @@ def play():
     COLOUR_RED = "\033[31m"
     COLOUR_BLACK = "\033[30m"
     choice = input("~ ").lower()
-    valid_inputs = ['help','h']
-    while choice not in valid_inputs and choice not in str(range(len(room))):
+    valid_inputs = ['help','h','skip','s']
+    while choice not in valid_inputs and choice.isdigit() == False:
         choice = input("~ Invalid input ~\n~ ").lower()
-    if choice == "help" or "h":
+    # Calls help string, see above
+    if choice == "help" or choice == "h":
         helper()
-    if choice in str(range(len(room))):
+    # Empties the room; main() will draw more cards.
+    elif choice == "skip" or choice == "s":
+        if len(room) == 4:
+            for card in range(3,-1,-1):
+                scoundrel_deck.card_list.append(room[card])
+                room.remove(room[card])
+        elif len(room) < 4:
+            print("~ Room must be full to skip ~")
+    elif int(choice) in range(len(room)):
         choice_card = room[int(choice)-1]
         #Performs actions according to the card's suit and conditions
         match choice_card.suit:
@@ -140,8 +152,9 @@ def __main__():
     while hp > 0 and (len(scoundrel_deck.card_list) + len(room) > 0):
         show_menu()
         play()
-        if len(room) == 1 and len(scoundrel_deck.card_list) > 0:
-            for i in range(3):
+        if len(room) <= 1 and len(scoundrel_deck.card_list) > 0:
+            # Below 4 - len(room) accounts for skipped turn where room is temporarily empty
+            for i in range(4 - len(room)):
                 room.append(scoundrel_deck.draw())
     if hp <= 0:
         print("GG you died shake my hand")

@@ -38,6 +38,6 @@ class deck_52:
     def shuffle_deck(self):
         random.shuffle(self.card_list)
 
-    #Pulls top card from deck (Last card in the list)
+    #Pulls top card from deck (First card in the list)
     def draw(self):
-        return self.card_list.pop()
+        return self.card_list.pop(0)
